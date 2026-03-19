@@ -12,7 +12,15 @@ if (major < 20) {
 require('dotenv').config({ path: '.env' });
 require('dotenv').config({ path: '.env.local' });
 
-mongoose.connect(process.env.DATABASE, { dbName: 'BizCollab_core' });
+const databaseUrl = process.env.DATABASE || process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  console.error('❌ FATAL ERROR: DATABASE environment variable is missing!');
+  console.error('Please add DATABASE or DATABASE_URL in your Railway Variables tab.');
+  process.exit(1);
+}
+
+mongoose.connect(databaseUrl, { dbName: 'BizCollab_core' });
 
 mongoose.connection.on('error', (error) => {
   console.error(`MongoDB connection error: ${error.message}`);
