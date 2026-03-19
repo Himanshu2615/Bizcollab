@@ -17,17 +17,24 @@ const corePublicRouter = require('./routes/coreRoutes/corePublicRouter');
 const authMiddleware = require('./middlewares/authMiddleware');
 const tenantMiddleware = require('./middlewares/tenantMiddleware');
 
+const env = (process.env.NODE_ENV || 'development').trim().toLowerCase();
+const isProduction = env === 'production';
+
 // Initialize app
 const app = express();
+
+// Log for debugging Railway issues
+console.log(`[System] Initializing in ${env} mode`);
+console.log(`[System] Static path: ${path.join(__dirname, '../public')}`);
 
 // Middlewares
 app.use(helmet({
   crossOriginResourcePolicy: false, // Allow cross-origin images/files
   contentSecurityPolicy: false,     // Disable CSP if it interferes with Next.js in dev
 }));
-app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+app.use(morgan(isProduction ? 'combined' : 'dev'));
 app.use(cors({ 
-  origin: process.env.NODE_ENV === 'production' ? true : true, // Set to true to allow all if needed, or specific domain
+  origin: true, 
   credentials: true 
 }));
 app.use(cookieParser());
@@ -63,7 +70,7 @@ app.use('/api', authMiddleware, tenantMiddleware, erpApiRouter);
 app.use('/public', corePublicRouter);
 
 // Serve Frontend in Production
-if (process.env.NODE_ENV === 'production') {
+if (isProduction) {
   app.use(express.static(path.join(__dirname, '../public')));
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'index.html'));
