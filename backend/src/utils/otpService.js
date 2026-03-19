@@ -3,7 +3,7 @@ const NodeCache = require('node-cache');
 const { getRedisClient } = require('../setup/redis');
 
 // Fallback in-memory cache if Redis is down
-const localCache = new NodeCache({ stdTTL: 180 }); // 3 minutes
+const localCache = new NodeCache({ stdTTL: 600 }); // 10 minutes
 
 /**
  * Generates a cryptographically secure 6-digit numeric OTP.
@@ -32,7 +32,7 @@ const storeOTP = async (userId, hashedOtp) => {
   const key = `otp:${userId}`;
   
   if (client) {
-    await client.set(key, hashedOtp, { EX: 180 });
+    await client.set(key, hashedOtp, { EX: 600 });
   } else {
     console.warn('Redis not available, using memory cache for OTP');
     localCache.set(key, hashedOtp);

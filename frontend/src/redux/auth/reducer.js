@@ -30,15 +30,6 @@ const authReducer = (state = INITIAL_STATE, action) => {
         isSuccess: true,
       };
 
-    case 'OTP_REQUIRED':
-      return {
-        ...state,
-        current: action.payload,
-        isLoggedIn: false,
-        isLoading: false,
-        isSuccess: true,
-      };
-
     case actionTypes.RESET_STATE:
       return {
         ...state,

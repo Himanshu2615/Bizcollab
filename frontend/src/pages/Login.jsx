@@ -23,7 +23,6 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [showOtp, setShowOtp] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [countdown, setCountdown] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -37,33 +36,16 @@ const LoginPage = () => {
 
   const handleResendOtp = () => {
     const userId = userData?._id || userData?.userId;
-    if (userId && countdown === 0) {
+    if (userId) {
        dispatch(resendOTP({ userId }));
-       setCountdown(180);
     }
   };
 
   useEffect(() => {
-    if (isSuccess && current) {
-      if (current.isVerified) {
-        navigate('/');
-      } else if (!showOtp) {
-        setUserData(current);
-        setShowOtp(true);
-        setCountdown(180);
-      }
+    if (isSuccess && current && current.isVerified) {
+      navigate('/');
     }
-  }, [isSuccess, current, navigate, showOtp]);
-
-  useEffect(() => {
-    let timer;
-    if (showOtp && countdown > 0) {
-      timer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [showOtp, countdown]);
+  }, [isSuccess, current, navigate]);
 
   return (
     <AuthModule 
@@ -142,16 +124,13 @@ const LoginPage = () => {
                   <Button 
                     type="link" 
                     onClick={handleResendOtp}
-                    disabled={countdown > 0}
                     style={{ 
                       fontWeight: 700, 
-                      color: countdown > 0 ? 'rgba(255, 255, 255, 0.3)' : '#7C3AED',
+                      color: '#7C3AED',
                       padding: 0
                     }}
                   >
-                    {countdown > 0 
-                      ? `Resend in ${Math.floor(countdown / 60)}:${(countdown % 60).toString().padStart(2, '0')}` 
-                      : 'Resend'}
+                    Resend
                   </Button>
                 </span>
               </div>

@@ -84,7 +84,7 @@ const sendOTP = async (email, otp) => {
                       </table>
 
                       <p style="margin: 0; color: #6B7280; font-size: 13px; text-align: center; line-height: 20px;">
-                        This code expires in <strong style="color: #F3F4F6;">3 minutes</strong>.
+                        This code expires in <strong style="color: #F3F4F6;">10 minutes</strong>.
                       </p>
 
                     </td>
