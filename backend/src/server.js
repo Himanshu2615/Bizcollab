@@ -34,12 +34,30 @@ for (const filePath of coreModelsFiles) {
 
 const { initRedis } = require('./setup/redis');
 const app = require('./app');
-app.set('port', process.env.PORT || 8888);
+// Set the port
+const port = process.env.PORT || 8888;
+app.set('port', port);
 
-initRedis().then(() => {
-  const server = app.listen(app.get('port'), () => {
-    console.log(`Express running on PORT: ${server.address().port}`);
-  });
+// Start the Express server immediately to prevent 502 Bad Gateway on Railway
+const server = app.listen(port, '0.0.0.0', () => {
+  console.log(`[System] Express running on PORT: ${server.address().port}`);
+  console.log(`[System] Host: 0.0.0.0 (Railway optimized)`);
+});
+
+// Initialize Redis in the background
+initRedis().catch(err => {
+  console.error('[System] Redis init failed (background):', err.message);
+});
+
+// Global Error Handlers to prevent silent crashes
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception thrown:', err);
+  // Optional: Graceful shutdown if error is critical
+});
 
   const io = require('socket.io')(server, {
   cors: {
@@ -114,4 +132,4 @@ mongoose.connection.once('open', () => {
   });
 });
 
-}); // end of initRedis().then()
+// No closure needed here anymore
