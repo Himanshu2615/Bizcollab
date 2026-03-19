@@ -1,9 +1,11 @@
 # Stage 1: Build Frontend
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app/frontend
+# Use ci for repeatable builds
 COPY frontend/package*.json ./
-RUN npm install
+RUN npm ci
 COPY frontend/ ./
+# Build frontend (Vite will use the relative path provided in .env)
 RUN npm run build
 
 # Stage 2: Prepare Backend
@@ -19,7 +21,8 @@ WORKDIR /app
 
 # Ensure production environment
 ENV NODE_ENV=production
-ENV PORT=8888
+# Railway provides PORT, this is a default fallback
+ENV PORT=8888 
 
 # Copy backend dependencies and source
 COPY --from=backend-builder --chown=node:node /app/backend /app/backend
