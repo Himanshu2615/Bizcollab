@@ -1,4 +1,7 @@
-const isProd = import.meta.env.PROD || process.env.NODE_ENV === 'production';
+const isProd = 
+  import.meta.env.PROD || 
+  process.env.NODE_ENV === 'production' || 
+  (typeof window !== 'undefined' && window.location.hostname !== 'localhost');
 
 export const API_BASE_URL =
   (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_BACKEND_SERVER) ||
