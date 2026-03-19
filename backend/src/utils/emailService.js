@@ -28,6 +28,7 @@ const sendOTP = async (email, otp) => {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_PASS,
       },
+      family: 4, // Force IPv4 routing on Railway as it struggles with Google's IPv6
       connectionTimeout: 10000, 
       greetingTimeout: 10000,
       socketTimeout: 15000,
