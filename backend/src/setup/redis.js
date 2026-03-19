@@ -4,22 +4,26 @@ let redisClient = null;
 
 const initRedis = async () => {
   try {
+    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
     const client = createClient({
-      url: process.env.REDIS_URL || 'redis://localhost:6379',
+      url: redisUrl,
       socket: {
-        reconnectStrategy: false // Do not retry connection if it fails
+        reconnectStrategy: (retries) => {
+          if (retries > 10) return new Error('Max retries reached');
+          return Math.min(retries * 50, 500); // Backoff for production
+        }
       }
     });
 
     client.on('error', (err) => {
-      // Suppress unhandled errors to avoid backend loop crashes
+      if (process.env.NODE_ENV === 'production') console.error('Redis Error:', err.message);
     });
 
     await client.connect();
-    console.log('Connected to Redis');
+    console.log('Connected to Upstash Redis');
     redisClient = client;
   } catch (err) {
-    console.warn('Redis connection failed, disabling backend caching. Run Redis locally to enable.');
+    console.warn(`Redis connection failed: ${err.message}. Using memory fallback.`);
     redisClient = null;
   }
 };
