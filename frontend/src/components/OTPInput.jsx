@@ -82,7 +82,7 @@ const OTPInput = ({ length = 6, onComplete }) => {
           }}
         />
       ))}
-      <style jsx>{`
+      <style>{`
         .otp-segment-input:focus {
           border-color: #7C3AED !important;
           background-color: rgba(124, 58, 237, 0.05) !important;

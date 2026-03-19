@@ -11,18 +11,26 @@ export const login =
     const data = await authService.login({ loginData });
 
     if (data.success === true) {
-      const auth_state = {
-        current: { ...data.user, token: data.token },
-        isLoggedIn: true,
-        isLoading: false,
-        isSuccess: false,
-      };
-      window.localStorage.setItem('auth', JSON.stringify(auth_state));
-      window.localStorage.removeItem('isLogout');
-      dispatch({
-        type: actionTypes.REQUEST_SUCCESS,
-        payload: { ...data.user, token: data.token },
-      });
+      const userResult = data.result || data.user;
+      if (userResult && userResult.isVerified === false) {
+        dispatch({
+          type: 'OTP_REQUIRED',
+          payload: userResult,
+        });
+      } else {
+        const auth_state = {
+          current: { ...userResult, token: data.token },
+          isLoggedIn: true,
+          isLoading: false,
+          isSuccess: true,
+        };
+        window.localStorage.setItem('auth', JSON.stringify(auth_state));
+        window.localStorage.removeItem('isLogout');
+        dispatch({
+          type: actionTypes.REQUEST_SUCCESS,
+          payload: { ...userResult, token: data.token },
+        });
+      }
     } else {
       dispatch({
         type: actionTypes.REQUEST_FAILED,
@@ -40,18 +48,25 @@ export const register =
     const data = await authService.register({ registerData });
 
     if (data.success === true) {
-      const auth_state = {
-        current: { ...data.result, token: data.token },
-        isLoggedIn: true,
-        isLoading: false,
-        isSuccess: true,
-      };
-      window.localStorage.setItem('auth', JSON.stringify(auth_state));
-      window.localStorage.removeItem('isLogout');
-      dispatch({
-        type: actionTypes.REQUEST_SUCCESS,
-        payload: { ...data.result, token: data.token },
-      });
+      if (data.result && data.result.isVerified === false) {
+        dispatch({
+          type: 'OTP_REQUIRED',
+          payload: data.result,
+        });
+      } else {
+        const auth_state = {
+          current: { ...data.result, token: data.token },
+          isLoggedIn: true,
+          isLoading: false,
+          isSuccess: true,
+        };
+        window.localStorage.setItem('auth', JSON.stringify(auth_state));
+        window.localStorage.removeItem('isLogout');
+        dispatch({
+          type: actionTypes.REQUEST_SUCCESS,
+          payload: { ...data.result, token: data.token },
+        });
+      }
     } else {
       dispatch({
         type: actionTypes.REQUEST_FAILED,

@@ -67,12 +67,11 @@ exports.register = async (req, res) => {
 
     await newUser.save();
 
-    // 🚀 OTP DISABLED: Skipping email/OTP generation.
-    const token = jwt.sign(
-      { id: newUser._id, tenantId: newUser.tenantId },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    // 🚀 OTP Enabled: Generate, store, and send OTP
+    const otp = generateOTP();
+    const hashedOtp = hashOTP(otp);
+    await storeOTP(newUser._id.toString(), hashedOtp);
+    await sendOTP(newUser.email, otp);
 
     const tenantDB = getTenantDB(tenantId);
     
@@ -155,14 +154,13 @@ exports.register = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Account Created Successfully!',
-      token,
+      message: 'Account Created Successfully! Please verify OTP.',
       result: {
         _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
         tenantId: newUser.tenantId,
-        isVerified: true,
+        isVerified: false,
       },
     });
 
@@ -192,23 +190,21 @@ exports.login = async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
-    // 🚀 OTP DISABLED: Issuing token immediately after password match
-    const token = jwt.sign(
-      { id: user._id, tenantId: user.tenantId },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
+    // 🚀 OTP Enabled: Generate, store, and send OTP
+    const otp = generateOTP();
+    const hashedOtp = hashOTP(otp);
+    await storeOTP(user._id.toString(), hashedOtp);
+    await sendOTP(user.email, otp);
 
     return res.status(200).json({ 
       success: true,
-      message: "Login successful",
-      token,
+      message: "Please enter the OTP sent to your email",
       result: {
         _id: user._id,
         name: user.name,
         email: user.email,
         tenantId: user.tenantId,
-        isVerified: true
+        isVerified: false
       }
     });
 
@@ -280,7 +276,7 @@ exports.resendOTP = async (req, res) => {
 
 
     const user = await User.findById(userId);
-    if (!user || user.isVerified) {
+    if (!user) {
       return res.status(400).json({ success: false, message: 'Invalid request' });
     }
 

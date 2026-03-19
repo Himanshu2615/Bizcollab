@@ -23,6 +23,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const [showOtp, setShowOtp] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [countdown, setCountdown] = useState(0);
 
   const dispatch = useDispatch();
 
@@ -35,22 +36,39 @@ const RegisterPage = () => {
   };
 
   const handleResendOtp = () => {
-    if (userData?._id) {
+    if (userData?._id && countdown === 0) {
        dispatch(resendOTP({ userId: userData?._id }));
+       setCountdown(180);
     }
   };
 
   useEffect(() => {
-    if (isSuccess && current && current.isVerified) {
-       antdApp.notification.success({
-        message: translate('Account Created'),
-        description: translate('Welcome! Your account has been created successfully.'),
-      });
-      setTimeout(() => {
-        navigate('/');
+    if (isSuccess && current) {
+      if (current.isVerified) {
+        antdApp.notification.success({
+          message: translate('Account Created'),
+          description: translate('Welcome! Your account has been created successfully.'),
+        });
+        setTimeout(() => {
+          navigate('/');
+        }, 1000);
+      } else if (!showOtp) {
+        setUserData(current);
+        setShowOtp(true);
+        setCountdown(180);
+      }
+    }
+  }, [isSuccess, current, navigate, translate, showOtp]);
+
+  useEffect(() => {
+    let timer;
+    if (showOtp && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
       }, 1000);
     }
-  }, [isSuccess, current, navigate, translate]);
+    return () => clearInterval(timer);
+  }, [showOtp, countdown]);
 
   return (
     <AuthModule 
@@ -121,13 +139,16 @@ const RegisterPage = () => {
                   <Button 
                     type="link" 
                     onClick={handleResendOtp}
+                    disabled={countdown > 0}
                     style={{ 
                       fontWeight: 700, 
-                      color: '#7C3AED',
+                      color: countdown > 0 ? 'rgba(255, 255, 255, 0.3)' : '#7C3AED',
                       padding: 0
                     }}
                   >
-                    Resend
+                    {countdown > 0 
+                      ? `Resend in ${Math.floor(countdown / 60)}:${(countdown % 60).toString().padStart(2, '0')}` 
+                      : 'Resend'}
                   </Button>
                 </span>
               </div>
