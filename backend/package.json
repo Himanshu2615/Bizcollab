@@ -6,9 +6,9 @@
         "node": "20.9.0"
     },
     "scripts": {
-        "start": "node --dns-result-order=ipv4first src/server.js",
+        "start": "node src/server.js",
         "dev": "npx kill-port 8888 && nodemon src/server.js --ignore public/",
-        "production": "NODE_ENV=production node --dns-result-order=ipv4first src/server.js",
+        "production": "NODE_ENV=production node src/server.js",
         "setup": "node src/setup/setup.js",
         "upgrade": "node src/setup/upgrade.js",
         "reset": "node src/setup/reset.js"
