@@ -9,8 +9,8 @@ const initRedis = async () => {
       url: redisUrl,
       socket: {
         reconnectStrategy: (retries) => {
-          if (retries > 10) return new Error('Max retries reached');
-          return Math.min(retries * 50, 500); // Backoff for production
+          if (retries > 50) return new Error('Max retries reached');
+          return Math.min(retries * 100, 3000); // More resilient backoff
         }
       }
     });
