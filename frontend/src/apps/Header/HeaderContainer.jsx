@@ -31,7 +31,7 @@ const HeaderContent = memo(forwardRef((props, ref) => {
     setIsSwitching(true);
     // Brief delay to allow the user to see the "Switching" state for a premium feel
     setTimeout(() => {
-      window.location.href = 'https://bizcollabv2.vercel.app/';
+      window.location.href = 'https://bizcollab-chat.vercel.app/';
     }, 400);
   };
 
