@@ -14,18 +14,23 @@ const sendOTP = async (email, otp) => {
   console.log('-----------------------------------------');
 
   try {
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_PASS) {
+      console.error('[EmailService] ❌ ERROR: GMAIL_USER or GMAIL_PASS is missing in environment variables!');
+      console.error('Please add them to your Railway dashboard "Variables" tab.');
+      throw new Error('Email configuration is missing');
+    }
+
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
-      port: 587,
-      secure: false, // Use STARTTLS for port 587
+      port: 465,
+      secure: true, // Use SSL for port 465
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_PASS,
       },
-      // 🛡️ SECURITY & STABILITY: Add timeouts to prevent server hangs
-      connectionTimeout: 5000, // 5 seconds
-      greetingTimeout: 5000,
-      socketTimeout: 10000, // 10 seconds total for socket
+      connectionTimeout: 10000, 
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
       tls: {
         rejectUnauthorized: false 
       }
