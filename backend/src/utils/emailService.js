@@ -22,8 +22,12 @@ const sendOTP = async (email, otp) => {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_PASS,
       },
+      // 🛡️ SECURITY & STABILITY: Add timeouts to prevent server hangs
+      connectionTimeout: 5000, // 5 seconds
+      greetingTimeout: 5000,
+      socketTimeout: 10000, // 10 seconds total for socket
       tls: {
-        rejectUnauthorized: false // Helps in some local dev environments
+        rejectUnauthorized: false 
       }
     });
 

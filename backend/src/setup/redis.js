@@ -11,12 +11,11 @@ const initRedis = async () => {
       url: redisUrl,
       socket: {
         reconnectStrategy: (retries) => {
-          // Fail fast in dev mode to reduce terminal noise if no local Redis
+          // 🛡️ SECURITY & STABILITY: Fail fast to avoid blocking the auth flow
+          // Fail after 8 retries (~10-15s) so we can gracefully fallback to memory cache
           if (isDev && retries > 3) return new Error('Local Redis not found');
-          
-          // More resilient for production or containerized environments
-          if (retries > 50) return new Error('Max retries reached');
-          return Math.min(retries * 100, 3000); 
+          if (retries > 8) return new Error('Max retries reached');
+          return Math.min(retries * 200, 2000); 
         }
       }
     });
