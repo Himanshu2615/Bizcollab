@@ -39,8 +39,9 @@ const authReducer = (state = INITIAL_STATE, action) => {
 
     case actionTypes.REGISTER_SUCCESS:
       return {
-        current: null,
-        isLoggedIn: false,
+        ...state,
+        current: action.payload.result,
+        isLoggedIn: true,
         isLoading: false,
         isSuccess: true,
       };

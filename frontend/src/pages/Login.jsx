@@ -42,21 +42,8 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
-      if (current && current.isVerified) {
-        navigate('/');
-      } else if (current && !current.isVerified) {
-        setUserData(current);
-        setShowOtp(true);
-      }
-    } else if (current && current.requiresOtp) {
-      // --- SECURE 2FA HANDLER ---
-      setUserData(current.result);
-      setShowOtp(true);
-    } else if (current && current.userId && !current.success) {
-      // Legacy handler for 403 fallbacks
-      setUserData({ _id: current.userId, email: 'your email' });
-      setShowOtp(true);
+    if (isSuccess && current && current.isVerified) {
+      navigate('/');
     }
   }, [isSuccess, current, navigate]);
 

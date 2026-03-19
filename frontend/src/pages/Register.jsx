@@ -41,25 +41,16 @@ const RegisterPage = () => {
   };
 
   useEffect(() => {
-    if (isSuccess && !showOtp && current && !current.isVerified) {
-      setUserData(current);
-      setShowOtp(true);
-      antdApp.notification.info({
-        message: translate('Verification Required'),
-        description: translate('Please enter the 6-digit code sent to your email.'),
-      });
-    }
-
-    if (isSuccess && showOtp && current && current.isVerified) {
+    if (isSuccess && current && current.isVerified) {
        antdApp.notification.success({
-        message: translate('Account Verified'),
-        description: translate('Welcome! Your email has been verified successfully.'),
+        message: translate('Account Created'),
+        description: translate('Welcome! Your account has been created successfully.'),
       });
       setTimeout(() => {
         navigate('/');
-      }, 1500);
+      }, 1000);
     }
-  }, [isSuccess, current, showOtp, navigate, translate]);
+  }, [isSuccess, current, navigate, translate]);
 
   return (
     <AuthModule 

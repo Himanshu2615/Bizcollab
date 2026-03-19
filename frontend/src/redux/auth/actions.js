@@ -40,9 +40,17 @@ export const register =
     const data = await authService.register({ registerData });
 
     if (data.success === true) {
+      const auth_state = {
+        current: { ...data.result, token: data.token },
+        isLoggedIn: true,
+        isLoading: false,
+        isSuccess: true,
+      };
+      window.localStorage.setItem('auth', JSON.stringify(auth_state));
+      window.localStorage.removeItem('isLogout');
       dispatch({
         type: actionTypes.REQUEST_SUCCESS,
-        payload: data.result,
+        payload: { ...data.result, token: data.token },
       });
     } else {
       dispatch({

@@ -65,17 +65,14 @@ exports.register = async (req, res) => {
 
     await newUser.save();
 
-    // Generate & Store OTP - Fail gracefully during setup
-    let emailSent = true;
-    try {
-      const otp = generateOTP();
-      const hashedOtp = hashOTP(otp);
-      await storeOTP(newUser._id.toString(), hashedOtp);
-      await sendOTP(newUser.email, otp);
-    } catch (otpErr) {
-      console.error('OTP/Email Dispatch failed during registration:', otpErr);
-      emailSent = false;
-    }
+    await newUser.save();
+
+    // 🚀 OTP DISABLED: Skipping email/OTP generation.
+    const token = jwt.sign(
+      { id: newUser._id, tenantId: newUser.tenantId },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
 
     const tenantDB = getTenantDB(tenantId);
     
@@ -158,17 +155,15 @@ exports.register = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: emailSent 
-        ? 'Account Created. Please verify your email with the OTP sent.'
-        : 'Account Created, but verification email could not be sent. Check backend console for OTP or try Resending.',
+      message: 'Account Created Successfully!',
+      token,
       result: {
         _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
-        isVerified: false,
         tenantId: newUser.tenantId,
-        isEmailSent: emailSent
-      }
+        isVerified: true,
+      },
     });
 
   } catch (err) {
@@ -197,29 +192,23 @@ exports.login = async (req, res) => {
       return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
-    // --- SECURE 2FA LOGIC: Always send OTP before granting access ---
-    let otpSent = true;
-    try {
-      const otp = generateOTP();
-      const hashedOtp = hashOTP(otp);
-      await storeOTP(user._id.toString(), hashedOtp);
-      await sendOTP(user.email, otp);
-    } catch (otpErr) {
-      console.error('OTP/Email Dispatch failed during login flow:', otpErr);
-      otpSent = false;
-    }
+    // 🚀 OTP DISABLED: Issuing token immediately after password match
+    const token = jwt.sign(
+      { id: user._id, tenantId: user.tenantId },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
 
-    // We never return the token here. We always redirect to OTP verification.
     return res.status(200).json({ 
-      success: false, // marked as false so frontend knows it's a multi-step process
-      requiresOtp: true,
-      message: otpSent
-        ? "A verification code has been sent to your email."
-        : "Credentials valid, but verification code could not be sent. Please try resending.", 
+      success: true,
+      message: "Login successful",
+      token,
       result: {
         _id: user._id,
+        name: user.name,
         email: user.email,
-        isVerified: user.isVerified
+        tenantId: user.tenantId,
+        isVerified: true
       }
     });
 
