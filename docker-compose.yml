@@ -16,17 +16,27 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: bizcollab-app
     depends_on:
       - mongodb
+      - redis
     environment:
       - DATABASE=mongodb://mongodb:27017/BizCollab_core
+      - REDIS_URL=redis://redis:6379
       - JWT_SECRET=${JWT_SECRET:-change-this-to-a-secure-secret-in-production}
       - NODE_ENV=production
       - PORT=8888
     expose:
       - "8888"
     restart: always
+    networks:
+      - bizcollab-net
+
+  redis:
+    image: redis:alpine
+    container_name: bizcollab-redis
+    restart: always
+    ports:
+      - "6379:6379"
     networks:
       - bizcollab-net
 
@@ -39,6 +49,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - bizcollab-app
+      - redis
     restart: always
     networks:
       - bizcollab-net
