@@ -12,16 +12,16 @@ export const login =
 
     if (data.success === true) {
       const auth_state = {
-        current: { ...data.user, token: data.token },
+        current: { ...data.result, token: data.token },
         isLoggedIn: true,
         isLoading: false,
-        isSuccess: false,
+        isSuccess: true,
       };
       window.localStorage.setItem('auth', JSON.stringify(auth_state));
       window.localStorage.removeItem('isLogout');
       dispatch({
         type: actionTypes.REQUEST_SUCCESS,
-        payload: { ...data.user, token: data.token },
+        payload: { ...data.result, token: data.token },
       });
     } else {
       dispatch({
