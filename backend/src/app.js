@@ -72,7 +72,9 @@ app.use('/public', corePublicRouter);
 // Serve Frontend in Production
 if (isProduction) {
   app.use(express.static(path.join(__dirname, '../public')));
-  app.get('*', (req, res) => {
+  
+  // Improved catch-all: Only serve index.html for non-API/non-public routes
+  app.get(/^(?!\/api|\/auth|\/public|\/static).*/, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'index.html'));
   });
 }
