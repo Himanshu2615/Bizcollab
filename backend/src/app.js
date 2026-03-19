@@ -25,9 +25,9 @@ app.use(helmet({
   crossOriginResourcePolicy: false, // Allow cross-origin images/files
   contentSecurityPolicy: false,     // Disable CSP if it interferes with Next.js in dev
 }));
-app.use(morgan('dev'));
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(cors({ 
-  origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : true, 
+  origin: process.env.NODE_ENV === 'production' ? true : true, // Set to true to allow all if needed, or specific domain
   credentials: true 
 }));
 app.use(cookieParser());

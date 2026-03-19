@@ -4,24 +4,48 @@ services:
   mongodb:
     image: mongo:latest
     container_name: bizcollab-mongodb
+    restart: always
     ports:
-      - "27017:27017"
+      - "27017:27017" # Exposed locally, but internal name used by app
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - bizcollab-net
 
   bizcollab-app:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: bizcollab-app
-    ports:
-      - "8888:8888"
     depends_on:
       - mongodb
     environment:
       - DATABASE=mongodb://mongodb:27017/BizCollab_core
-      - JWT_SECRET=change-this-to-a-secure-secret-in-production
+      - JWT_SECRET=${JWT_SECRET:-change-this-to-a-secure-secret-in-production}
       - NODE_ENV=production
       - PORT=8888
+    expose:
+      - "8888"
     restart: always
+    networks:
+      - bizcollab-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: bizcollab-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - bizcollab-app
+    restart: always
+    networks:
+      - bizcollab-net
 
 volumes:
   mongodb_data:
+
+networks:
+  bizcollab-net:
+    driver: bridge
