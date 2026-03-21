@@ -78,6 +78,12 @@ function Sidebar({ collapsible, isMobile = false }) {
     },
 
     {
+      key: 'transaction',
+      icon: <FileSyncOutlined style={{ fontSize: '22px' }} />,
+      label: <span style={{ fontWeight: 600 }}>{translate('transaction')}</span>,
+      onClick: () => navigate('/transaction'),
+    },
+    {
       key: 'invoice',
       icon: <ContainerOutlined style={{ fontSize: '22px' }} />,
       label: <span style={{ fontWeight: 600 }}>{translate('invoices')}</span>,
@@ -138,20 +144,20 @@ function Sidebar({ collapsible, isMobile = false }) {
       width={260}
       collapsedWidth={80}
       style={{
-        height: '100vh',
-        position: isMobile ? 'absolute' : 'fixed',
+        height: isMobile ? '100%' : '100vh',
+        position: isMobile ? 'relative' : 'fixed',
         top: 0,
         left: 0,
         zIndex: 1001,
-        backgroundColor: 'rgba(9, 10, 11, 0.8)', 
+        backgroundColor: 'rgba(9, 10, 11, 1)', 
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
         padding: '32px 0',
         display: 'flex',
         flexDirection: 'column',
         transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        borderRight: '1px solid rgba(59, 130, 246, 0.1)',
-        boxShadow: '4px 0 24px rgba(0, 0, 0, 0.3)',
+        borderRight: isMobile ? 'none' : '1px solid rgba(59, 130, 246, 0.1)',
+        boxShadow: isMobile ? 'none' : '4px 0 24px rgba(0, 0, 0, 0.3)',
         overflow: 'hidden' 
       }}
       theme="dark"
@@ -210,12 +216,8 @@ function Sidebar({ collapsible, isMobile = false }) {
 
 function MobileSidebar() {
     const [visible, setVisible] = useState(false);
-    const showDrawer = () => {
-        setVisible(true);
-    };
-    const onClose = () => {
-        setVisible(false);
-    };
+    const showDrawer = () => setVisible(true);
+    const onClose = () => setVisible(false);
 
     return (
         <>
@@ -224,17 +226,23 @@ function MobileSidebar() {
                 size="large"
                 onClick={showDrawer}
                 className="mobile-sidebar-btn"
-                style={{ ['marginLeft']: 25 }}
+                style={{ 
+                  color: '#FFFFFF', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  padding: 0
+                }}
             >
-                <MenuOutlined style={{ fontSize: 18 }} />
+                <MenuOutlined style={{ fontSize: 22 }} />
             </Button>
             <Drawer
-                size={250}
-                // style={{ backgroundColor: 'rgba(255, 255, 255, 1)' }}
+                width={280}
                 placement={'left'}
                 closable={false}
                 onClose={onClose}
                 open={visible}
+                styles={{ body: { padding: 0, background: '#000000' } }}
             >
                 <Sidebar collapsible={false} isMobile={true} />
             </Drawer>

@@ -1,9 +1,11 @@
 .wideAppContainer {
   max-width: 1150px;
+  width: 100%;
 }
 
 .appContainer {
   max-width: 1050px;
+  width: 100%;
 }
 
 .smallNavigation {
@@ -14,11 +16,18 @@
   margin-left: 220px;
 }
 
+@media (max-width: 768px) {
+  .smallNavigation, .wideNavigation {
+    margin-left: 0 !important;
+  }
+}
+
 body {
   background-color: var(--bg-page) !important;
 }
 
 .ant-layout-content {
   background-color: var(--bg-page) !important;
+  padding: 16px !important;
 }
 

@@ -228,6 +228,8 @@ module.exports = {
   profile_settings: 'Profile Settings',
   app_settings: 'App Settings',
   logout: 'Logout',
+  transaction: 'Transaction',
+  transactions: 'Transactions',
   number: 'Number',
   client: 'Client',
   total: 'Total',

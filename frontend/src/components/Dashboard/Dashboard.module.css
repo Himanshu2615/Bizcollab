@@ -1,0 +1,534 @@
+.dbWrap {
+  padding: 1.5rem 0;
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  color: #FFFFFF;
+}
+
+.dbTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.dbSub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0 0 1.5rem;
+}
+
+.liveBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2rem;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 99px;
+  width: fit-content;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dotLive {
+  background: #10B981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+  animation: pulseLive 2s infinite;
+}
+
+.dotDead {
+  background: #EF4444;
+}
+
+.liveText {
+  font-size: 11px;
+  color: #10B981;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.lastUpdated {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+@keyframes pulseLive {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 2rem;
+}
+
+.kpi {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.kpi::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Titanium-Glass KPI Card Variations (Elite Volumetric Feel) */
+.kpiRevenue { 
+  background: linear-gradient(135deg, rgba(29, 0, 248, 0.488) 0%, rgba(21, 0, 248, 0.05) 100%); 
+  border: 1px solid rgba(21, 0, 248, 0.6); 
+  box-shadow: 0 0 25px rgba(21, 0, 248, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+.kpiCollections { 
+  background: linear-gradient(135deg, rgba(0, 255, 55, 0.488) 0%, rgba(0, 255, 102, 0.05) 100%); 
+  border: 1px solid rgba(0, 255, 102, 0.6); 
+  box-shadow: 0 0 25px rgba(0, 255, 102, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+.kpiOutstanding { 
+  background: linear-gradient(135deg, rgba(255, 230, 0, 0.448) 0%, rgba(255, 0, 217, 0.05) 100%); 
+  border: 1px solid rgba(198, 200, 186, 0.966); 
+  box-shadow: 0 0 25px rgba(255, 230, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+.kpiCustomers { 
+
+  background: linear-gradient(135deg, rgba(0, 235, 252, 0.574) 0%, rgba(0, 235, 252, 0.05) 100%); 
+  border: 1px solid rgba(0, 235, 252, 0.6); 
+  box-shadow: 0 0 25px rgba(0, 235, 252, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Clean Floating Style for Top 4 Cards - No Borders */
+.kpi:nth-child(n) { border: 1px solid rgba(255, 255, 255, 0.04); }
+
+.kpiLabel {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 12px;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.kpiVal {
+  font-size: 28px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0 0 12px;
+  letter-spacing: -0.04em;
+  z-index: 1;
+  font-family: var(--font-mono, monospace);
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.kpiBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.badgeUp { background: rgba(16, 185, 129, 0.1); color: #00ff48; }
+.badgeDown { background: rgba(239, 68, 68, 0.1); color: #ff0000; }
+.badgeNeu { background: rgba(59, 130, 246, 0.1); color: #03f717; }
+
+.chartGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.chartCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 24px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chartCard:hover {
+  background: rgba(59, 130, 246, 0.02);
+  border-color: rgba(59, 130, 246, 0.6);
+  transform: translateY(-4px) scale(1.005);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.1),
+              0 14px 40px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+}
+
+.cardWide { grid-column: span 2; }
+
+.chartHead {
+  font-size: 16px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0 0 6px;
+}
+
+.chartDesc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.legendRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.statBox {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.statNum {
+  font-size: 36px;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: -0.04em;
+}
+
+.statLbl {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.progressWrap { margin-top: 32px; }
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.progressBarBg {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 10px;
+}
+
+.progressVal {
+  min-width: 44px;
+  text-align: right;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.doughnutLayout {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-top: 10px;
+}
+
+.doughnutWrap {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  flex-shrink: 0;
+}
+
+.doughnutCenter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.doughnutTotal {
+  font-size: 32px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.doughnutLbl {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 6px;
+}
+
+.statusList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.statusCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.statusTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 20px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.statusLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.statusPct {
+  font-size: 13px;
+  font-weight: 800;
+  color: #FFFFFF;
+  font-family: var(--font-mono, monospace);
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  z-index: 1;
+}
+
+.dynamicsHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.dynamicsTitleWrap h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.dynamicsTitleWrap p {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  margin: 4px 0 0;
+}
+
+.dynamicsBadge {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+}
+
+.dynamicsBody {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.dynamicsCards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  flex: 0 0 45%;
+}
+
+.dynCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+}
+
+.dynCount {
+  display: block;
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.dynCount.white { color: #FFFFFF; }
+.dynCount.blue { color: #60A5FA; }
+.dynCount.green { color: #10B981; }
+
+.dynLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.dynamicsStats {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+@media (max-width: 1200px) {
+  .dynamicsBody { flex-direction: column; gap: 32px; }
+  .dynamicsCards { flex: 1; width: 100%; }
+}
+
+@media (max-width: 768px) {
+  .dynamicsCards { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .dynamicsCards { grid-template-columns: 1fr; }
+}
+
+.dynStatRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dynStatTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dynStatLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+
+.dynStatPct {
+  font-size: 14px;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.dynBarTrack {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dynBarFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 1024px) {
+  .dbWrap { padding: 1.5rem; }
+  .kpiGrid { grid-template-columns: repeat(2, 1fr); }
+  .chartGrid { grid-template-columns: 1fr; }
+  .cardWide { grid-column: span 1; }
+  .dynamicsCards { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .dbTitle { font-size: 24px; }
+  .doughnutLayout { flex-direction: column; align-items: center; gap: 32px; }
+  .statusList { width: 100%; }
+  .dynamicsWrap { flex-direction: column !important; }
+  .dynamicsMain { flex: 1 !important; width: 100%; }
+  .dynamicsCards { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .kpiGrid { grid-template-columns: 1fr; }
+  .dbWrap { padding: 1rem; }
+  .kpi { padding: 20px; }
+  .kpiVal { font-size: 28px; }
+  .dynCount { font-size: 32px; }
+  .dynamicsTitleWrap h3 { font-size: 18px; }
+  .dynamicsBadge { display: none; }
+}

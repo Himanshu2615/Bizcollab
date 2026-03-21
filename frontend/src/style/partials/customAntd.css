@@ -813,3 +813,81 @@ body .ant-layout-content [style*="background: rgb(255, 255, 255)"] {
 .side-part {
   background: #000000 !important;
 }
+
+/* ====================================================
+   MOBILE OPTIMIZATION — Global Response Overrides
+   ==================================================== */
+
+@media (max-width: 768px) {
+  /* PageHeader: Space-efficient stacked layout */
+  .ant-page-header {
+    padding: 16px 12px !important;
+  }
+  
+  .ant-page-header-heading {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  
+  .ant-page-header-heading-title {
+    font-size: 20px !important;
+    white-space: normal !important;
+  }
+  
+  .ant-page-header-heading-extra {
+    margin: 0 !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    justify-content: flex-start !important;
+  }
+  
+  .ant-page-header-heading-extra > * {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+  }
+
+  /* Table: Maximum Real Estate */
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 12px 8px !important;
+    font-size: 11px !important;
+  }
+
+  /* Form: Stacked labels for narrow viewports */
+  .ant-form-item {
+    flex-direction: column !important;
+    margin-bottom: 24px !important;
+  }
+  
+  .ant-form-item-label {
+    text-align: left !important;
+    padding: 0 0 8px !important;
+  }
+
+  /* Typography: Downscale for phones */
+  h1 { font-size: 24px !important; }
+  h2 { font-size: 20px !important; }
+  h3 { font-size: 18px !important; }
+
+  /* Utilities */
+  .ant-space { width: 100% !important; flex-wrap: wrap !important; }
+  .ant-space-item { flex: 1 1 auto !important; }
+}
+
+@media (max-width: 480px) {
+  .ant-page-header-heading-extra {
+    flex-direction: column !important;
+  }
+  
+  .ant-btn {
+    width: 100% !important;
+  }
+
+  .ant-modal {
+    max-width: calc(100vw - 32px) !important;
+    margin: 16px auto !important;
+  }
+}

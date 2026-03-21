@@ -184,7 +184,7 @@ export default function RecentTable({ ...props }) {
   })), [updatedColumns]);
 
   const { data: result, isLoading, isSuccess } = useQuery({
-    queryKey: ['table', tenantId, entity, 'list'],
+    queryKey: ['table', tenantId, entity, 'list', props.refreshKey],
     queryFn: () => request.list({ entity }),
     select: (data) => data.result,
   });

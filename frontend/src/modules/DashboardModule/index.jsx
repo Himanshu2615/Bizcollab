@@ -323,16 +323,6 @@ export default function DashboardModule() {
            </Row>
         </motion.div>
 
-        {/* Tier 4: The Feed (Full Width) */}
-        <motion.div variants={itemVariants}>
-          <div className="bento-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <Title level={4} style={{ color: PALETTE.textPrimary, margin: 0, fontWeight: 700 }}>{translate('Live Transaction Log')}</Title>
-              <Text style={{ color: PALETTE.blue, fontWeight: 600, cursor: 'pointer' }}>{translate('View All')}</Text>
-            </div>
-            <RecentTable entity={entity} dataTableColumns={dataTableColumns} />
-          </div>
-        </motion.div>
       </div>
     </motion.div>
 
