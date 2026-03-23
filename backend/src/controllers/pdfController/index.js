@@ -1,5 +1,6 @@
 const pug = require('pug');
 const fs = require('fs');
+const path = require('path');
 const moment = require('moment');
 let pdf = require('html-pdf');
 const { listAllSettings, loadSettings } = require('@/middlewares/settings');
@@ -21,6 +22,12 @@ exports.generatePdf = async (
 ) => {
   try {
     const { targetLocation } = info;
+
+    // Extract directory from targetLocation and ensure it exists
+    const directory = path.dirname(targetLocation);
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory, { recursive: true });
+    }
 
     // if PDF already exists, then delete it and create a new PDF
     if (fs.existsSync(targetLocation)) {
@@ -89,16 +96,22 @@ exports.generatePdf = async (
         moment: moment,
       });
 
-      pdf
-        .create(htmlContent, {
-          format: info.format,
-          orientation: 'portrait',
-          border: '10mm',
-        })
-        .toFile(targetLocation, function (error) {
-          if (error) throw new Error(error);
-          if (callback) callback();
-        });
+      // Wrap pdf creation in a Promise to await it properly
+      return new Promise((resolve, reject) => {
+        pdf
+          .create(htmlContent, {
+            format: info.format,
+            orientation: 'portrait',
+            border: '10mm',
+          })
+          .toFile(targetLocation, function (error) {
+            if (error) {
+              return reject(new Error(error));
+            }
+            if (callback) callback();
+            resolve();
+          });
+      });
     }
   } catch (error) {
     throw new Error(error);

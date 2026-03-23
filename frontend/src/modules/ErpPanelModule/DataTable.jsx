@@ -21,6 +21,7 @@ import { selectListItems } from '@/redux/erp/selectors';
 import { useErpContext } from '@/context/erp';
 import { generate as uniqueId } from 'shortid';
 import { useNavigate } from 'react-router-dom';
+import storePersist from '@/redux/storePersist';
 
 import { DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
 
@@ -95,7 +96,9 @@ export default function DataTable({ config, extra = [] }) {
   }, [dispatch, navigate, entity]);
 
   const handleDownload = useCallback((record) => {
-    window.open(`${DOWNLOAD_BASE_URL}${entity}/${entity}-${record._id}.pdf`, '_blank');
+    const auth = storePersist.get('auth');
+    const token = auth?.current?.token;
+    window.open(`${DOWNLOAD_BASE_URL}${entity}/${entity}-${record._id}.pdf${token ? `?token=${token}` : ''}`, '_blank');
   }, [entity]);
 
   const handleDelete = useCallback((record) => {

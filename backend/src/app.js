@@ -13,6 +13,7 @@ const clientRoutes = require('./routes/clientRoutes');
 const coreApiRouter = require('./routes/coreRoutes/coreApi');
 const erpApiRouter = require('./routes/appRoutes/appApi');
 const corePublicRouter = require('./routes/coreRoutes/corePublicRouter');
+const coreDownloadRouter = require('./routes/coreRoutes/coreDownloadRouter');
 
 const authMiddleware = require('./middlewares/authMiddleware');
 const tenantMiddleware = require('./middlewares/tenantMiddleware');
@@ -68,6 +69,7 @@ app.use('/api', authMiddleware, tenantMiddleware, coreApiRouter);
 app.use('/api', authMiddleware, tenantMiddleware, erpApiRouter);
 
 app.use('/public', corePublicRouter);
+app.use('/download', authMiddleware, tenantMiddleware, coreDownloadRouter);
 
 // Serve Frontend in Production
 if (isProduction) {

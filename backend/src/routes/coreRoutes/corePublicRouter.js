@@ -14,7 +14,7 @@ router.route('/:subPath/:directory/:file').get(function (req, res) {
     const decodedFile = decodeURIComponent(file);
 
     // Define the trusted root directory
-    const rootDir = path.join(__dirname, '../../public');
+    const rootDir = path.join(__dirname, '..', '..', '..', 'public');
 
     // Safely join the decoded path segments
     const relativePath = path.join(decodedSubPath, decodedDirectory, decodedFile);
