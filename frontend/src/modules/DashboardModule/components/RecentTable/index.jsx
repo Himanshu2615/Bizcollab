@@ -11,7 +11,6 @@ import { selectCurrentAdmin } from '@/redux/auth/selectors';
 import { erp } from '@/redux/erp/actions';
 import useLanguage from '@/locale/useLanguage';
 import { useNavigate } from 'react-router-dom';
-import storePersist from '@/redux/storePersist';
 import { DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
 
 const { Text } = Typography;
@@ -68,9 +67,7 @@ export default function RecentTable({ ...props }) {
   }, [dispatch, navigate, entity]);
 
   const handleDownload = useCallback((record) => {
-    const auth = storePersist.get('auth');
-    const token = auth?.current?.token;
-    window.open(`${DOWNLOAD_BASE_URL}${entity}/${entity}-${record._id}.pdf${token ? `?token=${token}` : ''}`, '_blank');
+    window.open(`${DOWNLOAD_BASE_URL}${entity}/${entity}-${record._id}.pdf`, '_blank');
   }, [entity]);
 
   const updatedColumns = useMemo(() => [

@@ -34,12 +34,6 @@ COPY --from=frontend-builder --chown=node:node /app/frontend/dist /app/backend/p
 # Switch to the pre-existing non-privileged node user for security
 USER node
 
-# --- ADD THIS SECTION ---
-RUN apt-get update && apt-get install -y \
-    libfontconfig \
-    && rm -rf /var/lib/apt/lists/*
-# ------------------------
-
 EXPOSE 8888
 
 WORKDIR /app/backend

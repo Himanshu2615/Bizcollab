@@ -23,7 +23,6 @@ import { useMoney } from '@/settings';
 
 import useMail from '@/hooks/useMail';
 import { useNavigate } from 'react-router-dom';
-import storePersist from '@/redux/storePersist';
 
 export default function ReadItem({ config, selectedItem }) {
   const translate = useLanguage();
@@ -93,10 +92,8 @@ export default function ReadItem({ config, selectedItem }) {
           <Button
             key={`${uniqueId()}`}
             onClick={() => {
-              const auth = storePersist.get('auth');
-              const token = auth?.current?.token;
               window.open(
-                `${DOWNLOAD_BASE_URL}${entity}/${entity}-${currentErp._id}.pdf${token ? `?token=${token}` : ''}`,
+                `${DOWNLOAD_BASE_URL}${entity}/${entity}-${currentErp._id}.pdf`,
                 '_blank'
               );
             }}

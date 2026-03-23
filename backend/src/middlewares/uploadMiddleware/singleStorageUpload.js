@@ -12,7 +12,7 @@ const singleStorageUpload = ({
 }) => {
   var diskStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, path.join(__dirname, '..', '..', '..', '..', 'public', 'uploads', entity));
+      cb(null, `src/public/uploads/${entity}`);
     },
     filename: function (req, file, cb) {
       try {
