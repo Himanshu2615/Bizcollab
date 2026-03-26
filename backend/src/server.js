@@ -11,7 +11,10 @@ if (major < 20) {
 }
 
 require('dotenv').config({ path: '.env' });
+require('dotenv').config({ path: '../.env' }); // Look in parent for monorepo root config
 require('dotenv').config({ path: '.env.local' });
+require('dotenv').config({ path: '../.env.local' });
+
 
 const databaseUrl = process.env.DATABASE || process.env.DATABASE_URL;
 
@@ -47,12 +50,13 @@ initRedis().catch(err => {
 // Real-time Service Integration
 const io = require('socket.io')(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:5173", "https://*.railway.app"],
+    origin: process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : ["http://localhost:3000", "http://localhost:5173", "https://*.railway.app"],
     methods: ["GET", "POST"],
     credentials: true,
   },
   transports: ['websocket', 'polling']
 });
+
 
 // Store watchers for cleanup
 let watchers = [];

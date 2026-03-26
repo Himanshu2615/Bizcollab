@@ -24,8 +24,14 @@ const isProduction = env === 'production';
 const app = express();
 
 // Log for debugging Railway issues
+// Serve Frontend in Production
+const staticPath = isProduction 
+  ? path.join(__dirname, '../public') 
+  : path.join(__dirname, './public');
+
 console.log(`[System] Initializing in ${env} mode`);
-console.log(`[System] Static path: ${path.join(__dirname, './public')}`);
+console.log(`[System] Static path: ${staticPath}`);
+
 
 // Middlewares
 app.use(helmet({
@@ -80,13 +86,14 @@ app.use('/public', corePublicRouter);
 
 // Serve Frontend in Production
 if (isProduction) {
-  app.use(express.static(path.join(__dirname, './public')));
+  app.use(express.static(staticPath));
   
-  // Improved catch-all: Only serve index.html for non-API/non-public routes
-  app.get(/^(?!\/api|\/auth|\/public|\/static).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, './public', 'index.html'));
+  // Improved catch-all: Only serve index.html for non-API/non-public/non-assets routes
+  app.get(/^(?!\/api|\/auth|\/public|\/assets).*/, (req, res) => {
+    res.sendFile(path.join(staticPath, 'index.html'));
   });
 }
+
 
 // Error Handling
 app.use(errorHandlers.notFound);

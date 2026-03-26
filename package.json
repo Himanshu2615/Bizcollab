@@ -2,13 +2,16 @@
     "name": "biz-root",
     "version": "1.0.0",
     "scripts": {
+        "start": "npm start --prefix backend",
         "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
         "build": "npm run build --prefix frontend",
         "dev:frontend": "npm run dev --prefix frontend",
         "dev:backend": "npm run dev --prefix backend",
         "install:backend": "npm install --prefix backend",
         "install:frontend": "npm install --prefix frontend",
-        "install:all": "npm run install:backend && npm run install:frontend"
+        "install:all": "npm run install:backend && npm run install:frontend",
+        "build:all": "npm run install:all && npm run build",
+        "setup": "npm run setup --prefix backend"
     },
     "devDependencies": {
         "concurrently": "^8.2.2"
