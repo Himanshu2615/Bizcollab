@@ -1,7 +1,13 @@
 const downloadPdf = require('@/handlers/downloadHandler/downloadPdf');
+const exportCsv = require('@/handlers/downloadHandler/exportCsv');
 const express = require('express');
 
 const router = express.Router();
+
+router.route('/export/:entity').get(function (req, res) {
+  const { entity } = req.params;
+  exportCsv(req, res, { entity });
+});
 
 router.route('/:directory/:file').get(function (req, res) {
   try {

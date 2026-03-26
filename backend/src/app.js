@@ -25,7 +25,7 @@ const app = express();
 
 // Log for debugging Railway issues
 console.log(`[System] Initializing in ${env} mode`);
-console.log(`[System] Static path: ${path.join(__dirname, '../public')}`);
+console.log(`[System] Static path: ${path.join(__dirname, './public')}`);
 
 // Middlewares
 app.use(helmet({
@@ -61,21 +61,30 @@ app.use('/api', authRoutes); // Handles /login, /register, /setup
 app.use('/auth', authRoutes);
 // app.use('/api/client', authMiddleware, tenantMiddleware, clientRoutes);
 
+const publicDownloadPdf = require('./handlers/downloadHandler/publicDownloadPdf');
+
+// Public PDF Download (for sharing)
+app.get('/public/pdf/:tenantId/:directory/:id', publicDownloadPdf);
+
+const coreDownloadRouter = require('./routes/coreRoutes/coreDownloadRouter');
+
 // Core API (Admin, Settings)
 app.use('/api', authMiddleware, tenantMiddleware, coreApiRouter);
 
 // ERP API (Quotes, Invoices, etc.)
 app.use('/api', authMiddleware, tenantMiddleware, erpApiRouter);
 
+app.use('/download', authMiddleware, tenantMiddleware, coreDownloadRouter);
+
 app.use('/public', corePublicRouter);
 
 // Serve Frontend in Production
 if (isProduction) {
-  app.use(express.static(path.join(__dirname, '../public')));
+  app.use(express.static(path.join(__dirname, './public')));
   
   // Improved catch-all: Only serve index.html for non-API/non-public routes
   app.get(/^(?!\/api|\/auth|\/public|\/static).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+    res.sendFile(path.join(__dirname, './public', 'index.html'));
   });
 }
 

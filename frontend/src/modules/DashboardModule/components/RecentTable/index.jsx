@@ -67,8 +67,9 @@ export default function RecentTable({ ...props }) {
   }, [dispatch, navigate, entity]);
 
   const handleDownload = useCallback((record) => {
-    window.open(`${DOWNLOAD_BASE_URL}${entity}/${entity}-${record._id}.pdf`, '_blank');
-  }, [entity]);
+    const token = currentAdmin?.token;
+    window.open(`${DOWNLOAD_BASE_URL}${entity}/${entity}-${record._id}.pdf${token ? `?token=${token}` : ''}`, '_blank');
+  }, [entity, currentAdmin]);
 
   const updatedColumns = useMemo(() => [
     ...dataTableColumns.map(col => {

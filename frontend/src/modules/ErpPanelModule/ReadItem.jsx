@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Divider, Button, Row, Col, Descriptions, Statistic, Card, Tag } from 'antd';
+import { Divider, Button, Row, Col, Descriptions, Statistic, Card, Tag, Dropdown, message } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
 import {
   EditOutlined,
@@ -7,13 +7,17 @@ import {
   CloseCircleOutlined,
   RetweetOutlined,
   MailOutlined,
+  ShareAltOutlined,
+  WhatsAppOutlined,
+  CopyOutlined,
 } from '@ant-design/icons';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentAdmin } from '@/redux/auth/selectors';
 import useLanguage from '@/locale/useLanguage';
 import { erp } from '@/redux/erp/actions';
 import { generate as uniqueId } from 'shortid';
-import { DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
+import { DOWNLOAD_BASE_URL, PUBLIC_DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
 import { useMoney } from '@/settings';
 import useMail from '@/hooks/useMail';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +28,39 @@ export default function ReadItem({ config, selectedItem }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const moneySettings = useMoney();
+  const currentAdmin = useSelector(selectCurrentAdmin);
   const { send, isLoading: mailInProgress } = useMail({ entity });
+
+  const handleShareFile = async () => {
+    try {
+      const token = currentAdmin?.token;
+      const downloadUrl = `${DOWNLOAD_BASE_URL}${entity}/${entity}-${invoiceData._id}.pdf${token ? `?token=${token}` : ''}`;
+      
+      message.loading({ content: translate('Preparing file...'), key: 'share_file' });
+      
+      const response = await fetch(downloadUrl);
+      if (!response.ok) throw new Error('Failed to fetch PDF');
+      
+      const blob = await response.blob();
+      const file = new File([blob], `${entity}-${invoiceData.number || invoiceData._id}.pdf`, { type: 'application/pdf' });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: `${ENTITY_NAME} # ${invoiceData.number}`,
+        });
+        message.success({ content: translate('Shared successfully!'), key: 'share_file' });
+      } else {
+        // Fallback to sharing the link if file sharing is not supported
+        handleShare('native');
+        message.destroy('share_file');
+      }
+    } catch (error) {
+      console.error('Error sharing file:', error);
+      message.error({ content: translate('Sharing failed. Sharing link instead.'), key: 'share_file' });
+      handleShare('native');
+    }
+  };
 
   // Safe money formatter that handles undefined settings
   const formatMoney = (amount) => {
@@ -113,7 +149,8 @@ export default function ReadItem({ config, selectedItem }) {
           <Button
             key={`${uniqueId()}`}
             onClick={() => {
-              window.open(`${DOWNLOAD_BASE_URL}${entity}/${entity}-${invoiceData._id}.pdf`, '_blank');
+              const token = currentAdmin?.token;
+              window.open(`${DOWNLOAD_BASE_URL}${entity}/${entity}-${invoiceData._id}.pdf${token ? `?token=${token}` : ''}`, '_blank');
             }}
             icon={<FilePdfOutlined />}
           >
@@ -121,11 +158,10 @@ export default function ReadItem({ config, selectedItem }) {
           </Button>,
           <Button
             key={`${uniqueId()}`}
-            loading={mailInProgress}
-            onClick={() => send(invoiceData._id)}
-            icon={<MailOutlined />}
+            icon={<ShareAltOutlined />}
+            onClick={handleShareFile}
           >
-            {translate('Send by Email')}
+            {translate('Share')}
           </Button>,
           <Button
             key={`${uniqueId()}`}

@@ -9,12 +9,14 @@ import {
   EllipsisOutlined,
   ArrowRightOutlined,
   ArrowLeftOutlined,
+  FileExcelOutlined,
 } from '@ant-design/icons';
 import { Dropdown, Table, Button } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
 
 import AutoCompleteAsync from '@/components/AutoCompleteAsync';
 import { useSelector, useDispatch } from 'react-redux';
+import { selectCurrentAdmin } from '@/redux/auth/selectors';
 import useLanguage from '@/locale/useLanguage';
 import { erp } from '@/redux/erp/actions';
 import { selectListItems } from '@/redux/erp/selectors';
@@ -94,9 +96,17 @@ export default function DataTable({ config, extra = [] }) {
     navigate(`/${entity}/update/${record._id}`);
   }, [dispatch, navigate, entity]);
 
+  const currentAdmin = useSelector(selectCurrentAdmin);
+
   const handleDownload = useCallback((record) => {
-    window.open(`${DOWNLOAD_BASE_URL}${entity}/${entity}-${record._id}.pdf`, '_blank');
-  }, [entity]);
+    const token = currentAdmin?.token;
+    window.open(`${DOWNLOAD_BASE_URL}${entity}/${entity}-${record._id}.pdf${token ? `?token=${token}` : ''}`, '_blank');
+  }, [entity, currentAdmin]);
+
+  const handleExport = useCallback(() => {
+    const token = currentAdmin?.token;
+    window.open(`${DOWNLOAD_BASE_URL}export/${entity}${token ? `?token=${token}` : ''}`, '_blank');
+  }, [entity, currentAdmin]);
 
   const handleDelete = useCallback((record) => {
     dispatch(erp.currentAction({ actionType: 'delete', data: record }));
@@ -197,6 +207,9 @@ export default function DataTable({ config, extra = [] }) {
           />,
           <Button onClick={handelDataTableLoad} key={`${uniqueId()}`} icon={<RedoOutlined />}>
             {translate('Refresh')}
+          </Button>,
+          <Button onClick={handleExport} key={`${uniqueId()}`} icon={<FileExcelOutlined />}>
+            {translate('Export CSV')}
           </Button>,
 
           !disableAdd && <AddNewItem config={config} key={`${uniqueId()}`} />,

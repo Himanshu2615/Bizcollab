@@ -1,5 +1,7 @@
 const custom = require('@/controllers/pdfController');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = downloadPdf = async (req, res, { directory, id }) => {
   try {
@@ -19,13 +21,25 @@ module.exports = downloadPdf = async (req, res, { directory, id }) => {
 
       const fileId = modelName.toLowerCase() + '-' + result._id + '.pdf';
       const folderPath = modelName.toLowerCase();
-      const targetLocation = `src/public/download/${folderPath}/${fileId}`;
+      const targetLocation = path.join(process.cwd(), 'src', 'public', 'download', folderPath, fileId);
+
+      // Create directory if it doesn't exist
+      const dir = path.dirname(targetLocation);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
       await custom.generatePdf(
         modelName,
         { filename: folderPath, format: 'A4', targetLocation },
         result,
         async () => {
           return res.download(targetLocation, (error) => {
+            // Delete the temporary file after download completes or fails
+            fs.unlink(targetLocation, (err) => {
+              if (err) console.error('Error deleting temp PDF:', err);
+            });
+
             if (error)
               return res.status(500).json({
                 success: false,

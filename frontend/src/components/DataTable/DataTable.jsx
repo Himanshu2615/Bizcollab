@@ -11,6 +11,7 @@ import {
   ArrowLeftOutlined,
   SearchOutlined,
   LoadingOutlined,
+  FileExcelOutlined,
 } from '@ant-design/icons';
 import { Dropdown, Table, Button, Input } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
@@ -20,11 +21,13 @@ import AutoCompleteAsync from '@/components/AutoCompleteAsync';
 import { useSelector, useDispatch } from 'react-redux';
 import { crud } from '@/redux/crud/actions';
 import { selectListItems } from '@/redux/crud/selectors';
+import { selectCurrentAdmin } from '@/redux/auth/selectors';
 import useLanguage from '@/locale/useLanguage';
 import { dataForTable } from '@/utils/dataStructure';
 import { useMoney, useDate } from '@/settings';
 
 import { generate as uniqueId } from 'shortid';
+import { DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
 
 import { useCrudContext } from '@/context/crud';
 
@@ -80,6 +83,12 @@ export default function DataTable({ config, extra = [] }) {
   const dispatch = useDispatch();
   const { result: listResult, isLoading: listIsLoading } = useSelector(selectListItems);
   const { pagination, items: dataSource } = listResult;
+  const currentAdmin = useSelector(selectCurrentAdmin);
+
+  const handleExport = useCallback(() => {
+    const token = currentAdmin?.token;
+    window.open(`${DOWNLOAD_BASE_URL}export/${entity}${token ? `?token=${token}` : ''}`, '_blank');
+  }, [entity, currentAdmin]);
 
   const handleRead = useCallback((record) => {
     dispatch(crud.currentItem({ data: record }));
@@ -229,6 +238,9 @@ export default function DataTable({ config, extra = [] }) {
           ),
           <Button onClick={handelDataTableLoad} key={`${uniqueId()}`} icon={<RedoOutlined />}>
             {translate('Refresh')}
+          </Button>,
+          <Button onClick={handleExport} key={`${uniqueId()}`} icon={<FileExcelOutlined />}>
+            {translate('Export CSV')}
           </Button>,
 
           <AddNewItem key={`${uniqueId()}`} config={config} />,

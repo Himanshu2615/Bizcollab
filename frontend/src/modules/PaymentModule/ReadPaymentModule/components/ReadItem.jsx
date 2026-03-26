@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { Button, Row, Col, Descriptions, Statistic, Tag, Divider, Typography } from 'antd';
+import { Button, Row, Col, Descriptions, Statistic, Tag, Divider, Typography, Dropdown, message } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
 import {
   EditOutlined,
@@ -8,9 +8,13 @@ import {
   CloseCircleOutlined,
   MailOutlined,
   ExportOutlined,
+  ShareAltOutlined,
+  WhatsAppOutlined,
+  CopyOutlined,
 } from '@ant-design/icons';
 
 import { useSelector, useDispatch } from 'react-redux';
+import { selectCurrentAdmin } from '@/redux/auth/selectors';
 import { erp } from '@/redux/erp/actions';
 import useLanguage from '@/locale/useLanguage';
 
@@ -18,7 +22,7 @@ import { generate as uniqueId } from 'shortid';
 
 import { selectCurrentItem } from '@/redux/erp/selectors';
 
-import { DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
+import { DOWNLOAD_BASE_URL, PUBLIC_DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
 import { useMoney } from '@/settings';
 
 import useMail from '@/hooks/useMail';
@@ -33,6 +37,37 @@ export default function ReadItem({ config, selectedItem }) {
   const { send, isLoading: mailInProgress } = useMail({ entity });
   const navigate = useNavigate();
 
+  const handleShareFile = async () => {
+    try {
+      const token = currentAdmin?.token;
+      const downloadUrl = `${DOWNLOAD_BASE_URL}${entity}/${entity}-${currentErp._id}.pdf${token ? `?token=${token}` : ''}`;
+      
+      message.loading({ content: translate('Preparing file...'), key: 'share_file' });
+      
+      const response = await fetch(downloadUrl);
+      if (!response.ok) throw new Error('Failed to fetch PDF');
+      
+      const blob = await response.blob();
+      const file = new File([blob], `${entity}-${currentErp.number || currentErp._id}.pdf`, { type: 'application/pdf' });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: `${ENTITY_NAME} # ${currentErp.number}`,
+        });
+        message.success({ content: translate('Shared successfully!'), key: 'share_file' });
+      } else {
+        handleShare('native');
+        message.destroy('share_file');
+      }
+    } catch (error) {
+      console.error('Error sharing file:', error);
+      message.error({ content: translate('Sharing failed. Sharing link instead.'), key: 'share_file' });
+      handleShare('native');
+    }
+  };
+
+  const currentAdmin = useSelector(selectCurrentAdmin);
   const { result: currentResult } = useSelector(selectCurrentItem);
 
   const resetErp = {
@@ -92,8 +127,9 @@ export default function ReadItem({ config, selectedItem }) {
           <Button
             key={`${uniqueId()}`}
             onClick={() => {
+              const token = currentAdmin?.token;
               window.open(
-                `${DOWNLOAD_BASE_URL}${entity}/${entity}-${currentErp._id}.pdf`,
+                `${DOWNLOAD_BASE_URL}${entity}/${entity}-${currentErp._id}.pdf${token ? `?token=${token}` : ''}`,
                 '_blank'
               );
             }}
@@ -103,13 +139,10 @@ export default function ReadItem({ config, selectedItem }) {
           </Button>,
           <Button
             key={`${uniqueId()}`}
-            loading={mailInProgress}
-            onClick={() => {
-              send(currentErp._id);
-            }}
-            icon={<MailOutlined />}
+            icon={<ShareAltOutlined />}
+            onClick={handleShareFile}
           >
-            {translate('Send by email')}
+            {translate('Share')}
           </Button>,
 
           <Button

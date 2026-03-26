@@ -1,10 +1,15 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Typography, Row, Col } from 'antd';
+import { Typography, Row, Col, Button } from 'antd';
+import { FileExcelOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import { io } from 'socket.io-client';
 import RecentTable from '@/modules/DashboardModule/components/RecentTable';
 import useLanguage from '@/locale/useLanguage';
 import { API_BASE_URL } from '@/config/serverApiConfig';
+
+import { useSelector } from 'react-redux';
+import { selectCurrentAdmin } from '@/redux/auth/selectors';
+import { DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
 
 const { Title, Text } = Typography;
 
@@ -38,6 +43,13 @@ export default function Transaction() {
   const translate = useLanguage();
   const entity = 'invoice';
   const [refreshKey, setRefreshKey] = useState(0);
+  const currentAdmin = useSelector(selectCurrentAdmin);
+
+  const handleExport = () => {
+    const token = currentAdmin?.token;
+    const exportUrl = `${DOWNLOAD_BASE_URL}export/${entity}${token ? `?token=${token}` : ''}`;
+    window.open(exportUrl, '_blank');
+  };
 
   useEffect(() => {
     const socket = io(API_BASE_URL.replace('/api/', ''));
@@ -111,7 +123,27 @@ export default function Transaction() {
                   <Text style={{ color: '#3B82F6', fontSize: 10, fontWeight: 700, letterSpacing: 0.5 }}>LIVE SYNC</Text>
                 </div>
               </div>
-              <Text style={{ color: PALETTE.textSecondary, fontSize: 13 }}>{translate('Real-time ledger updates')}</Text>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <Text style={{ color: PALETTE.textSecondary, fontSize: 13, marginRight: 8 }}>{translate('Real-time ledger updates')}</Text>
+                <Button 
+                  type="primary" 
+                  icon={<FileExcelOutlined />} 
+                  onClick={handleExport}
+                  style={{ 
+                    background: 'rgba(16, 185, 129, 0.1)', 
+                    borderColor: 'rgba(16, 185, 129, 0.2)', 
+                    color: '#10B981',
+                    borderRadius: '8px',
+                    height: '40px',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                  className="export-btn"
+                >
+                  {translate('Export CSV')}
+                </Button>
+              </div>
             </div>
             <RecentTable entity={entity} dataTableColumns={dataTableColumns} refreshKey={refreshKey} />
           </div>
@@ -124,6 +156,11 @@ export default function Transaction() {
           100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
         }
         .pulse-dot { animation: pulse 2s infinite; }
+        .export-btn:hover {
+          background: rgba(16, 185, 129, 0.2) !important;
+          color: #10B981 !important;
+          border-color: #10B981 !important;
+        }
       `}</style>
     </motion.div>
   );

@@ -16,6 +16,7 @@ export const BASE_URL =
 export const WEBSITE_URL = isProd ? '/' : 'http://localhost:3000/';
 
 export const DOWNLOAD_BASE_URL = BASE_URL + 'download/';
+export const PUBLIC_DOWNLOAD_BASE_URL = BASE_URL + 'public/pdf/';
 export const ACCESS_TOKEN_NAME = 'x-auth-token';
 
 export const FILE_BASE_URL = BASE_URL;

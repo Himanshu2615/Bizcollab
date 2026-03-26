@@ -80,7 +80,8 @@ exports.generatePdf = async (
         }
       }
 
-      const htmlContent = pug.renderFile('src/pdf/' + modelName + '.pug', {
+      const path = require('path');
+      const htmlContent = pug.renderFile(path.join(process.cwd(), 'src', 'pdf', modelName + '.pug'), {
         model: result,
         settings,
         translate,
