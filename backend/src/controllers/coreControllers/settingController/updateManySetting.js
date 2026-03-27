@@ -7,8 +7,8 @@ const updateManySetting = async (req, res) => {
   const updateDataArray = [];
   const { settings, settingCategory } = req.body;
 
-  for (const setting of settings) {
-    if (!setting.hasOwnProperty('settingKey') || !setting.hasOwnProperty('settingValue')) {
+  for (const setting of settings || []) {
+    if (!setting || !setting.hasOwnProperty('settingKey')) {
       settingsHasError = true;
       break;
     }
@@ -20,6 +20,7 @@ const updateManySetting = async (req, res) => {
         filter: { settingKey: settingKey, ...(req.tenantId && { tenantId: req.tenantId }) },
         update: {
           $set: {
+            // settingValue can now be undefined/null as per instruction
             settingValue: settingValue,
             ...(settingCategory && { settingCategory }),
             ...(req.tenantId && { tenantId: req.tenantId }),
@@ -56,19 +57,11 @@ const updateManySetting = async (req, res) => {
 
   const result = await Model.bulkWrite(updateDataArray);
 
-  if (!result || result.nMatched < 1) {
-    return res.status(404).json({
-      success: false,
-      result: null,
-      message: 'No settings found by to update',
-    });
-  } else {
-    return res.status(200).json({
-      success: true,
-      result: [],
-      message: 'we update all settings',
-    });
-  }
+  return res.status(200).json({
+    success: true,
+    result: [],
+    message: 'Settings updated successfully',
+  });
 };
 
 module.exports = updateManySetting;

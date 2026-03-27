@@ -33,7 +33,10 @@ export default function UpdateSettingForm({ config, children, withUpload, upload
       const settings = [];
 
       for (const [key, value] of Object.entries(fieldsValue)) {
-        settings.push({ settingKey: key, settingValue: value });
+        // Filter out internal fields and the file field which is handled separately for uploads
+        if (key !== 'file' && key !== '_id' && key !== 'tenantId') {
+          settings.push({ settingKey: key, settingValue: value });
+        }
       }
 
       dispatch(

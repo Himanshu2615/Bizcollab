@@ -13,7 +13,7 @@ const updateBySettingKey = async (req, res) => {
   }
   const { settingValue, settingCategory } = req.body;
 
-  if (!settingValue) {
+  if (settingValue === undefined) {
     return res.status(202).json({
       success: false,
       result: null,
