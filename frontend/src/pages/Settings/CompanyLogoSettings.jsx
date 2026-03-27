@@ -18,7 +18,7 @@ export default function AppSettings() {
 
   const configPage = {
     entity,
-    settingsCategory: 'app_settings',
+    settingsCategory: 'company_settings',
     ...Labels,
   };
 

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { BASE_URL } from '@/config/serverApiConfig';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { settingsAction } from '@/redux/settings/actions';
@@ -18,7 +19,7 @@ export default function UpdateSettingForm({ config, children, withUpload, upload
   const onSubmit = (fieldsValue) => {
     console.log('🚀 ~ onSubmit ~ fieldsValue:', fieldsValue);
     if (withUpload) {
-      if (fieldsValue.file) {
+      if (fieldsValue.file && fieldsValue.file.length > 0 && fieldsValue.file[0].originFileObj) {
         fieldsValue.file = fieldsValue.file[0].originFileObj;
       }
       dispatch(
@@ -43,10 +44,26 @@ export default function UpdateSettingForm({ config, children, withUpload, upload
 
 
   useEffect(() => {
-    const current = result[settingsCategory];
-
-    form.setFieldsValue(current);
-  }, [result]);
+    if (result) {
+      const current = result[settingsCategory];
+      if (withUpload && uploadSettingKey && current && current[uploadSettingKey]) {
+        const fileList = [
+          {
+            uid: '-1',
+            name: uploadSettingKey,
+            status: 'done',
+            url: BASE_URL + current[uploadSettingKey],
+          },
+        ];
+        form.setFieldsValue({
+          ...current,
+          file: fileList,
+        });
+      } else {
+        form.setFieldsValue(current);
+      }
+    }
+  }, [result, settingsCategory]);
 
   return (
     <div>

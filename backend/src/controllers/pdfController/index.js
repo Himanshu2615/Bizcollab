@@ -1,5 +1,6 @@
 const pug = require('pug');
 const fs = require('fs');
+const path = require('path');
 const moment = require('moment');
 let pdf = require('html-pdf');
 const { listAllSettings, loadSettings } = require('@/middlewares/settings');
@@ -59,7 +60,34 @@ exports.generatePdf = async (
       
       const { dateFormat } = useDate({ settings });
 
-      settings.public_server_file = process.env.PUBLIC_SERVER_FILE;
+      settings.public_server_file = process.env.PUBLIC_SERVER_FILE || 'https://bizcollab-production.up.railway.app/' || 'http://localhost:8888/';
+      
+      // Convert logo to base64 for PDF
+      if (settings.company_logo) {
+        try {
+          const logoPath = path.join(process.cwd(), 'src', settings.company_logo);
+          if (fs.existsSync(logoPath)) {
+            const logoData = fs.readFileSync(logoPath);
+            const extension = path.extname(logoPath).substring(1);
+            settings.company_logo = `data:image/${extension};base64,${logoData.toString('base64')}`;
+          }
+        } catch (e) {
+          console.error('Error reading logo for PDF:', e);
+        }
+      }
+      
+      if (settings.company_icon) {
+        try {
+          const iconPath = path.join(process.cwd(), 'src', settings.company_icon);
+          if (fs.existsSync(iconPath)) {
+            const iconData = fs.readFileSync(iconPath);
+            const extension = path.extname(iconPath).substring(1);
+            settings.company_icon = `data:image/${extension};base64,${iconData.toString('base64')}`;
+          }
+        } catch (e) {
+          console.error('Error reading icon for PDF:', e);
+        }
+      }
 
       // Ensure all numeric values in result are properly formatted
       if (result) {
@@ -80,7 +108,7 @@ exports.generatePdf = async (
         }
       }
 
-      const path = require('path');
+
       const htmlContent = pug.renderFile(path.join(process.cwd(), 'src', 'pdf', modelName + '.pug'), {
         model: result,
         settings,
